@@ -56,7 +56,6 @@ func main() {
 	if _permit.KeepEnv {
 		err = syscall.Exec(args[0], args[0:], os.Environ())
 	} else {
-		fmt.Println(_permit.Paths)
 		err = syscall.Exec(args[0], args[0:], _permit.Paths)
 	}
 	if err != nil {
