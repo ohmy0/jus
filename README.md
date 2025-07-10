@@ -1,4 +1,4 @@
-# JUS — Just UID/GUID Setter
+# JUS — Just UID/GID Setter
 
 A minimal `sudo`/`doas` alternative written in **Go** (only **232 lines!**).  
 Uses **PAM** for auth and runs commands with a different UID/GUID.
