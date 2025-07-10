@@ -12,6 +12,7 @@ Uses **PAM** for auth and runs commands with a different UID/GUID.
 git clone https://github.com/ohmy0/jus
 cd ./jus
 # Please install golang before building
+go get jus
 go build jus
 # Move bin file ( run as root )
 mv ./jus /usr/local/bin
