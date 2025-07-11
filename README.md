@@ -1,7 +1,7 @@
 # JUS — Just UID/GID Set
 
-A minimal `sudo`/`doas` alternative written in **Go** (only **232 lines!**).  
-Uses **PAM** for auth and runs commands with a different UID/GUID.
+A minimal `sudo`/`doas` alternative written in **Go** (only **252 lines!**).  
+Uses **PAM** for auth.
 
 ---  
 
