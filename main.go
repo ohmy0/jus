@@ -42,15 +42,18 @@ func main() {
 	finalGid, err := strconv.Atoi(finalUser.Gid)
 	if err != nil {
 		fmt.Printf(_unknownError, err)
+		os.Exit(1)
 	}
 
 	err = syscall.Setuid(finalUid)
 	if err != nil {
 		fmt.Printf(_cantUid, err)
+		os.Exit(1)
 	}
 	err = syscall.Setgid(finalGid)
 	if err != nil {
 		fmt.Printf(_cantGid, err)
+		os.Exit(1)
 	}
 
 	if _permit.KeepEnv {
