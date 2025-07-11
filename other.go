@@ -7,16 +7,17 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"syscall"
 )
 
 const (
-	_configPath = "/etc/jus.toml"
-
-	_cantLoadConfig = "can't load config /etc/jus.toml"
-	_unknownUser    = "user %s is not in jus.toml\n"
-	_unknownAsUser  = "unknown <as> user %s\n"
-	_unknownError   = "unkown error:%s\n"
+	_configPath      = "/etc/jus.toml"
+	_configPermError = "config file must be owned by root and have 644 permissions"
+	_cantLoadConfig  = "can't load config /etc/jus.toml"
+	_unknownUser     = "user %s is not in jus.toml\n"
+	_unknownAsUser   = "unknown <as> user %s\n"
+	_unknownError    = "unkown error:%s\n"
 
 	_pleasePassword = "password: "
 
@@ -27,6 +28,7 @@ const (
 	_pamAccCheck          = "acc validation failed:%s\n "
 	_nothing              = "nothing to do"
 	_cantFind             = "can't find %s\n"
+	_unsafePath           = "unsafe path %s\n"
 
 	_cantUid  = "can't set uid:%s\n"
 	_cantGid  = "can't set gid:%s\n"
@@ -34,7 +36,8 @@ const (
 )
 
 var (
-	_stdPaths = []string{"/bin/", "/sbin/", "/usr/sbin", "/usr/bin/", "/usr/local/bin"}
+	_stdPaths = []string{"/bin/", "/sbin/", "/usr/sbin", "/usr/bin/", "/usr/local/bin", "/usr/local/sbin/"}
+	_stdEnv   = []string{"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}
 	_config   = Config{}
 	_permit   = Permit{}
 )
@@ -69,7 +72,18 @@ func PasswordRead(prompt string) ([]byte, error) {
 	fmt.Fprint(os.Stderr, prompt)
 	defer fmt.Fprintf(os.Stderr, "\n")
 
-	return term.ReadPassword(int(syscall.Stdin))
+	pass, err := term.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return nil, err
+	}
+
+	securePass := make([]byte, len(pass))
+	copy(securePass, pass)
+	for i := range pass {
+		pass[i] = 0
+	}
+	runtime.KeepAlive(pass)
+	return securePass, nil
 }
 
 // PasswordCheck checks further access via PAM
@@ -83,6 +97,7 @@ func PasswordCheck() {
 		for i := range pass {
 			pass[i] = 0
 		}
+		runtime.KeepAlive(pass)
 	}()
 
 	trans, err := pam.StartFunc("system-auth", _permit.User, func(s pam.Style, msg string) (string, error) {
@@ -134,5 +149,4 @@ func FindUtility(data string, paths []string) (string, bool) {
 		}
 	}
 	return "", false
-
 }
