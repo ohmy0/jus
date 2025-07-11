@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"os"
+	"syscall"
 )
 
 type Config struct {
@@ -15,6 +16,20 @@ type Permit struct {
 	As      string   `toml:"as"`
 	Paths   []string `toml:"paths"`
 	KeepEnv bool     `toml:"keepenv"`
+}
+
+// CheckConfigPerm check perms
+func CheckConfigPerm() {
+	info, err := os.Stat(_configPath)
+	if err != nil {
+		fmt.Printf(_cantLoadConfig)
+		os.Exit(1)
+	}
+
+	if info.Mode().Perm() > 0644 || info.Sys().(*syscall.Stat_t).Uid != 0 {
+		fmt.Println(_configPermError)
+		os.Exit(1)
+	}
 }
 
 // LoadConfig from _configPath
