@@ -36,7 +36,9 @@ user="youruser" # The user under which this configuration will be applied
 
 as="root" # Under whose identity the command will be executed
 
-paths=["/usr/bin","/bin"] # Paths in which commands will be searched ( Optional, std paths = /bin /sbin /usr/bin /usr/sbin /usr/local/bin ) 
+paths=["/usr/bin","/bin"] # Paths in which commands will be searched ( Optional, std paths = /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin ) 
+
+keepenv=true # saves variables PATH, TERM, LANG
 ```
 
 ---
